@@ -63,9 +63,14 @@ jobs:
       env:
         CI: true
         
+    - name: Create build directory if it doesn't exist
+      run: mkdir -p frontend/build
+        
     - name: Archive Frontend Build Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
+      if: success()
       with:
         name: frontend-build
         path: frontend/build/
+        if-no-files-found: warn
         retention-days: 5
