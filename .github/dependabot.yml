@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/backend" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    groups:
+      all: # Name of the group
+        patterns:
+          - "*"
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/frontend" # Location of package manifests
+    schedule:
+      interval: "weekly"
+    groups:
+      all: # Name of the group
+        patterns:
+          - "*"
