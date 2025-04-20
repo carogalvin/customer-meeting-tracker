@@ -1,0 +1,71 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      # Set up MongoDB for backend tests
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+        
+    strategy:
+      matrix:
+        node-version: [16.x]
+        
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        
+    # Backend test and build
+    - name: Backend - Install Dependencies
+      working-directory: ./backend
+      run: npm ci
+      
+    - name: Backend - Run Tests
+      working-directory: ./backend
+      run: npm test
+      env:
+        NODE_ENV: test
+        MONGODB_URI: mongodb://localhost:27017/customer_meetings_app_test
+        
+    - name: Backend - Build Check
+      working-directory: ./backend
+      run: |
+        # Verify that the server can start (without actually keeping it running)
+        node -e "require('./server.js'); console.log('Backend build check passed');"
+        
+    # Frontend test and build
+    - name: Frontend - Install Dependencies
+      working-directory: ./frontend
+      run: npm ci
+      
+    - name: Frontend - Run Tests
+      working-directory: ./frontend
+      run: npm test -- --watchAll=false
+      
+    - name: Frontend - Build
+      working-directory: ./frontend
+      run: npm run build
+      env:
+        CI: true
+        
+    - name: Archive Frontend Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend-build
+        path: frontend/build/
+        retention-days: 5
