@@ -62,8 +62,7 @@ const MeetingDetail = () => {
     return <Alert variant="warning">Meeting not found.</Alert>;
   }
 
-  // Determine customer ID correctly regardless of whether customer is populated or just an ID
-  const customerId = typeof meeting.customer === 'object' ? meeting.customer._id : meeting.customer;
+  // Determine customer name from the meeting object
   const customerName = typeof meeting.customer === 'object' ? meeting.customer.name : 'Customer';
 
   return (
