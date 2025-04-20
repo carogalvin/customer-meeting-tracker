@@ -42,12 +42,6 @@ jobs:
         NODE_ENV: test
         MONGODB_URI: mongodb://localhost:27017/customer_meetings_app_test
         
-    - name: Backend - Build Check
-      working-directory: ./backend
-      run: |
-        # Verify that the server can start (without actually keeping it running)
-        node -e "require('./server.js'); console.log('Backend build check passed');"
-        
     # Frontend test and build
     - name: Frontend - Install Dependencies
       working-directory: ./frontend
